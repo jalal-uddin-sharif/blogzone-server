@@ -35,6 +35,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const blogsCollection = client.db('blogsData').collection('user_blogs')
+    const commentsCollection = client.db('blogsData').collection('user_comments')
 
     app.post("/blogs", async(req, res)=>{
         const blog = req.body;
@@ -46,12 +47,15 @@ async function run() {
       const result = await blogsCollection.find().toArray()
       res.send(result)
     })
-    
+
     app.get("/blog/:id", async(req, res)=>{
       const id = {_id: new ObjectId(req.params.id)}
       const result = await blogsCollection.findOne(id)
       res.send(result)
     })
+
+    //create comments
+   
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // // Send a ping to confirm a successful connection
