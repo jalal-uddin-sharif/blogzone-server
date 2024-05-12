@@ -45,9 +45,11 @@ async function run() {
 
     app.get("/blogs", async(req, res)=>{
       const filter = req.query.category;
-      console.log(filter);
-      let query = {}
-      if(filter) query = {category : filter}
+      const searchBlog = req.query.search;
+      let query = {
+        title: {$regex: searchBlog, $options: 'i'},
+      }
+      if(filter) query.category = filter;
       const result = await blogsCollection.find(query).toArray()
       res.send(result)
     })
