@@ -44,7 +44,11 @@ async function run() {
     })
 
     app.get("/blogs", async(req, res)=>{
-      const result = await blogsCollection.find().toArray()
+      const filter = req.query.category;
+      console.log(filter);
+      let query = {}
+      if(filter) query = {category : filter}
+      const result = await blogsCollection.find(query).toArray()
       res.send(result)
     })
 
@@ -60,7 +64,12 @@ async function run() {
       const result = await commentsCollection.insertOne(comment)
       res.send(result)
     })
-    
+
+    //get all comment
+    app.get("/comments", async(req, res)=>{
+      const result = await commentsCollection.find().toArray()
+      res.send(result)
+    })
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // // Send a ping to confirm a successful connection
