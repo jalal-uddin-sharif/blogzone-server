@@ -36,6 +36,7 @@ async function run() {
   try {
     const blogsCollection = client.db('blogsData').collection('user_blogs')
     const commentsCollection = client.db('blogsData').collection('user_comments')
+    const wishListCollection = client.db('blogsData').collection('user_wishlist')
 
     app.post("/blogs", async(req, res)=>{
         const blog = req.body;
@@ -71,6 +72,13 @@ async function run() {
     app.get("/comments/:id", async(req, res)=>{
       console.log(req.params.id);
       const result = await commentsCollection.find({id: req.params.id}).toArray()
+      res.send(result)
+    })
+
+    //add to wishlist
+    app.post("/wishlist", async(req, res)=>{
+      const listData = req.body;
+      const result = await wishListCollection.insertOne(listData)
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
