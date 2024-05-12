@@ -66,8 +66,9 @@ async function run() {
     })
 
     //get all comment
-    app.get("/comments", async(req, res)=>{
-      const result = await commentsCollection.find().toArray()
+    app.get("/comments/:id", async(req, res)=>{
+      console.log(req.params.id);
+      const result = await commentsCollection.find({id: req.params.id}).toArray()
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
