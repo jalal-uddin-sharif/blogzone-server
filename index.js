@@ -75,6 +75,12 @@ async function run() {
       res.send(result)
     })
 
+    //recent blogs
+    app.get("/recent-blogs", async(req, res)=>{
+      const result = await blogsCollection.find().sort({timestamp: -1}).toArray()
+      res.send(result)
+    })
+
     //create comments
     app.post("/send-comments", async(req, res)=>{
       const comment = req.body;
@@ -104,8 +110,11 @@ async function run() {
     })
 
     //delete wishlist data
-    app.delete("/delete-wishlist/:id", async(req, res)=>{
-      const result = await wishListCollection.deleteOne({_id: new ObjectId(req.params.id)})
+    app.delete("/delete-wishlist", async(req, res)=>{
+      // const email = req.query.email
+      const email = req.query.email
+      const id = req.query.id
+      const result = await wishListCollection.deleteOne({email: email, id: id})
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
