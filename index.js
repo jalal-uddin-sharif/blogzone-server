@@ -61,6 +61,20 @@ async function run() {
       res.send(result)
     })
 
+    //update blogs
+    app.put("/update-blogs/:id", async(req, res)=>{
+      const blogData = req.body;
+      const query = {_id: new ObjectId(req.params.id)}
+      const options = {upsert: true}
+      const updateBlog = {
+        $set: {
+          ...blogData,
+        },
+      }
+      const result = await blogsCollection.updateOne(query, updateBlog, options)
+      res.send(result)
+    })
+
     //create comments
     app.post("/send-comments", async(req, res)=>{
       const comment = req.body;
@@ -78,6 +92,7 @@ async function run() {
     //add to wishlist
     app.post("/wishlist", async(req, res)=>{
       const listData = req.body;
+      console.log(listData);
       const result = await wishListCollection.insertOne(listData)
       res.send(result)
     })
@@ -85,6 +100,12 @@ async function run() {
     //get from wishlist
     app.get("/wishlist/:email", async(req, res)=>{
       const result = await wishListCollection.find({email: req.params.email}).toArray()
+      res.send(result)
+    })
+
+    //delete wishlist data
+    app.delete("/delete-wishlist/:id", async(req, res)=>{
+      const result = await wishListCollection.deleteOne({_id: new ObjectId(req.params.id)})
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
