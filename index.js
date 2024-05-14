@@ -13,7 +13,7 @@ const password = process.env.Password;
 
 //middleware
 app.use(cors({
-  origin: ["https://blogzone-bf45b.web.app", "http://localhost:5174"],
+  origin: ["https://blogzone-bf45b.web.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
@@ -112,8 +112,12 @@ async function run() {
     });
 
     //update blogs
-    app.put("/update-blogs/:id", async (req, res) => {
+    app.put("/update-blogs/:id", verifyToken, async (req, res) => {
       const blogData = req.body;
+        console.log(blogData.email);
+      if(req.user.email !== blogData.email){
+        return res.status(403).send({message: 'forbidden access'})
+      }
       const query = { _id: new ObjectId(req.params.id) };
       const options = { upsert: true };
       const updateBlog = {
@@ -148,7 +152,7 @@ async function run() {
     //get all comment
     app.get("/comments/:id", async (req, res) => {
       const result = await commentsCollection
-        .find({ id: req.params.id })
+        .find({ id: req.params.id }).sort({timestamp: -1})
         .toArray();
       res.send(result);
     });
@@ -189,6 +193,12 @@ async function run() {
       const email = req.body;
       console.log(email);
       const result = await newsLetterCollection.insertOne(email)
+      res.send(result)
+    })
+
+    //featured blog data
+    app.get("/featured-blog", async(req, res)=>{
+      const result = await blogsCollection.find().limit(10).toArray()
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
