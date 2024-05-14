@@ -10,15 +10,13 @@ const cookieParser = require("cookie-parser");
 const username = process.env.User_name;
 const password = process.env.Password;
 
-console.log(username, password);
 
 //middleware
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://blogzone-bf45b.web.app"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: ["https://blogzone-bf45b.web.app", "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -37,6 +35,7 @@ const verifyToken = (req, res, next) => {
     });
   }
 };
+
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${username}:${password}@cluster0.zukg64l.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -77,14 +76,17 @@ async function run() {
     });
 
     //clearing Token
-    app.get("/logout", async (req, res) => {
+    app.post("/logout", async (req, res) => {
       res
         .clearCookie("token", { ...cookieOptions, maxAge: 0 })
         .send({ success: true });
     });
 
-    app.post("/blogs", async (req, res) => {
+    app.post("/blogs", verifyToken, async (req, res) => {
       const blog = req.body;
+      if(req.user.email !== blog.email){
+        return res.status(403).send({message: 'forbidden access'})
+      }
       const result = await blogsCollection.insertOne(blog);
       res.send(result);
     });
