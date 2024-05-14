@@ -13,7 +13,7 @@ const password = process.env.Password;
 
 //middleware
 app.use(cors({
-  origin: ["https://blogzone-bf45b.web.app", "http://localhost:5173"],
+  origin: ["https://blogzone-bf45b.web.app", "http://localhost:5174"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
@@ -64,6 +64,9 @@ async function run() {
     const wishListCollection = client
       .db("blogsData")
       .collection("user_wishlist");
+    const newsLetterCollection = client
+      .db("blogsData")
+      .collection("newsletter_email");
 
     //jwt token
     app.post("/jwt", async (req, res) => {
@@ -180,6 +183,14 @@ async function run() {
       });
       res.send(result);
     });
+
+    //newletter
+    app.post("/newsletter",async(req, res)=>{
+      const email = req.body;
+      console.log(email);
+      const result = await newsLetterCollection.insertOne(email)
+      res.send(result)
+    })
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // // Send a ping to confirm a successful connection
