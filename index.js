@@ -26,7 +26,6 @@ const verifyToken = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.API_SECRET_KEY, (err, decoded) => {
       if (err) {
-        console.log(err);
         return res.status(401).send({message: 'unauthorized access'})
         
       }
@@ -114,7 +113,6 @@ async function run() {
     //update blogs
     app.put("/update-blogs/:id", verifyToken, async (req, res) => {
       const blogData = req.body;
-        console.log(blogData.email);
       if(req.user.email !== blogData.email){
         return res.status(403).send({message: 'forbidden access'})
       }
@@ -191,7 +189,6 @@ async function run() {
     //newletter
     app.post("/newsletter",async(req, res)=>{
       const email = req.body;
-      console.log(email);
       const result = await newsLetterCollection.insertOne(email)
       res.send(result)
     })
