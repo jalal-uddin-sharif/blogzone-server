@@ -73,7 +73,7 @@ async function run() {
       const user = req.body;
 
       const token = jwt.sign(user, process.env.API_SECRET_KEY, {
-        expiresIn: "1h",
+        expiresIn: "365d",
       });
       res.cookie("token", token, cookieOptions).send({ success: true });
     });
@@ -198,7 +198,7 @@ async function run() {
 
     //featured blog data
     app.get("/featured-blog", async(req, res)=>{
-      const result = await blogsCollection.find().limit(10).toArray()
+      const result = await blogsCollection.find().sort({description: 1}).limit(10).toArray()
       res.send(result)
     })
     // Connect the client to the server	(optional starting in v4.7)
